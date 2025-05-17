@@ -1,47 +1,25 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ref, onMounted } from 'vue'
+
+const message = ref('')
+const loading = ref(true)
+
+onMounted(async () => {
+  console.log('🔄 onMounted fired, starting fetch to /api')
+
+  try {
+    const response = await fetch('/api')
+    console.log('✅ Fetch response:', response)
+
+    const data = await response.json()
+    console.log('✅ Parsed data:', data)
+
+    message.value = data.message
+  } catch (error) {
+    console.error('❌ Fetch failed:', error)
+    message.value = 'Failed to fetch from API.'
+  } finally {
+    loading.value = false
+  }
+})
 </script>
-
-<template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
-</template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
